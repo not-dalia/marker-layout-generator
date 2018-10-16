@@ -94,7 +94,7 @@
                 },
                 remove: parseInt(document.getElementById('id-remove-marker').value) || null
             });
-            let marker = markerGenerator._generateView();
+            let marker = markerGenerator.generateView();
             document.querySelector('#view').innerHTML = "";
             document.querySelector('#view').appendChild(marker.svg);
             document.querySelector('#pattern-box').innerHTML = marker.pattern;
