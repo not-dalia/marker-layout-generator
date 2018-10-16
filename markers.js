@@ -199,7 +199,7 @@ class MarkerPatternGenerator {
         "Too many markers. Consider decreasing marker count or size"
       );
 
-    this.markerPattern += this.markerCount + "\n\n";
+    this.markerPattern = ((this.markerToRemove && this.markers.indexOf(this.markerToRemove) >= 0)? this.markerCount-1 : this.markerCount) + "\n\n";
 
     //populate top row
     for (let i = 0; i < wElementCount; i++) {
