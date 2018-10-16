@@ -1,0 +1,124 @@
+<html>
+
+<head>
+    <script src="markers.js"></script>
+    <style>
+        #options{
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-end;
+            padding: 5px 30px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .row{
+            padding: 10px;
+        }
+
+        .row label, .row input{
+            display: block;
+            padding: 3px;
+        }
+
+        .row label{
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .main{
+            display: flex;
+            flex-direction: row;
+        }
+
+        #pattern{
+            min-width:400px;
+            padding: 30px;
+        }
+
+        .title{
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        textarea{
+            width: 100%;
+            height: 400px;
+            resize: vertical;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="options">
+        <div class="row">
+            <label for="page-width">Page Width (mm)</label> <input type="number" name="page-width" id="page-width" value="300">
+        </div>
+        <div class="row">
+            <label for="page-width">Page Height (mm)</label> <input type="number" name="page-height" id="page-height" value="200">
+        </div>
+        <div class="row">
+                <label for="marker-size">Marker Size (mm)</label> <input type="number" name="marker-size" id="marker-size" value="20">
+            </div>
+        <div class="row">
+            <label for="marker-count">Marker Count</label> <input type="number" name="marker-count" id="marker-count" value="16">
+        </div>
+        <div class="row">
+            <label for="id-remove-marker">Marker Id to remove</label><input type="number" name="id-remove-marker" id="id-remove-marker">
+        </div>
+        <div class="row">
+            <button onclick="generateView()">Generate SVG</button>
+            <button id="download" onclick="saveData()">Download SVG</button>
+        </div>
+
+    </div>
+    <div class="main">
+        <div id="view"></div>
+        <div id="pattern">
+            <div class="title">Pattern Output</div>
+            <textarea name="pattern-box" id="pattern-box" cols="30" rows="10"></textarea>
+        </div>
+    </div>
+
+    <script>
+
+
+        function generateView() {
+            let markerGenerator = new MarkerPatternGenerator(parseInt(document.getElementById('page-width').value) || 300, parseInt(document.getElementById('page-height').value) || 200, parseInt(document.getElementById('marker-size').value) || 20, {
+                markerCount: parseInt(document.getElementById('marker-count').value) || 16,
+                markerShapes: {
+                    type: "subset",
+                    // prettier-ignore
+                    markers: [0, 1]
+                },
+                remove: parseInt(document.getElementById('id-remove-marker').value) || null
+            });
+            let marker = markerGenerator._generateView();
+            document.querySelector('#view').innerHTML = "";
+            document.querySelector('#view').appendChild(marker.svg);
+            document.querySelector('#pattern-box').innerHTML = marker.pattern;
+            //console.log(marker.pattern);
+        };
+
+        function saveData() {
+            let a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            let data = document.querySelector('#view').innerHTML,
+                blob = new Blob([data], { type: "image/svg+xml" }),
+                url = window.URL.createObjectURL(blob),
+                fileName = `generated_svg.svg`;
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        window.onload = function () {
+            generateView();
+        };
+    </script>
+</body>
+
+</html>
